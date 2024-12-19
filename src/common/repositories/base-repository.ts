@@ -26,7 +26,8 @@ export class BaseRepository<T extends Model> {
     values: CreationAttributes<T>,
     options?: CreateOptions<T>,
   ): Promise<T> {
-    return this.model.create(values, options);
+    const created = await this.model.create(values, options);
+    return created.toJSON();
   }
 
   async update(

@@ -20,8 +20,7 @@ export class UserService {
     const userCreated = await this.userRepository.create({
       ...dto,
     });
-    const user = userCreated.toJSON();
-    delete user.password;
-    return user;
+    delete userCreated.password;
+    return userCreated;
   }
 }
