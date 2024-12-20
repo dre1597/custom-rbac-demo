@@ -18,6 +18,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
           storage,
           autoLoadModels: true,
           synchronize: true,
+          dialectOptions: {
+            foreignKeys: true,
+          },
         };
       },
       inject: [ConfigService],

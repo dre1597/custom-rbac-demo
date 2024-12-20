@@ -27,6 +27,8 @@ async function bootstrap() {
       .setTitle('Custom RBAC demo')
       .setDescription('Custom RBAC demo')
       .setVersion('0.1')
+      .addBearerAuth(undefined, 'defaultBearerAuth')
+      .addBearerAuth(undefined, 'refreshBearerAuth')
       .build();
 
     const document = SwaggerModule.createDocument(app, config);

@@ -14,8 +14,8 @@ export class BaseRepository<T extends Model> {
     return this.model.findAll(options);
   }
 
-  async findByPk(id: number, options?: FindOptions): Promise<T | null> {
-    return this.model.findByPk(id, options);
+  async findByPk(id: string, options?: FindOptions): Promise<T | null> {
+    return await this.model.findByPk(id, options);
   }
 
   async findOne(options?: FindOptions): Promise<T | null> {
@@ -41,14 +41,14 @@ export class BaseRepository<T extends Model> {
     await this.model.destroy(options);
   }
 
-  async softDelete(id: number): Promise<void> {
+  async softDelete(id: string): Promise<void> {
     const record = await this.model.findByPk(id, { paranoid: false });
     if (record) {
       await record.destroy({ force: false });
     }
   }
 
-  async restore(id: number): Promise<void> {
+  async restore(id: string): Promise<void> {
     const record = await this.model.findByPk(id, { paranoid: false });
     if (record && record.restore) {
       await record.restore();

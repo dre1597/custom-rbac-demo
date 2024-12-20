@@ -1,24 +1,46 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { IsEnum, IsNumber, IsOptional, validateSync } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  validateSync,
+} from 'class-validator';
 import { plainToInstance } from 'class-transformer';
 
-import { apiConfig } from './custom-config';
+import { apiConfig, authConfig } from './custom-config';
 
 export class ConfigValidationDto {
   @IsOptional()
-  @IsNumber()
+  @IsString()
   PORT?: number;
 
   @IsOptional()
   @IsEnum(['development', 'production', 'test'])
   NODE_ENV?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  JWT_SECRET?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  JWT_EXPIRATION?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  JWT_REFRESH_SECRET?: string;
+
+  @IsNotEmpty()
+  @IsString()
+  JWT_REFRESH_EXPIRATION?: string;
 }
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [apiConfig],
+      load: [apiConfig, authConfig],
       isGlobal: true,
       envFilePath: '.env',
       validate: (config: Record<string, any>) => {
@@ -31,5 +53,6 @@ export class ConfigValidationDto {
       },
     }),
   ],
+  exports: [ConfigModule],
 })
 export class CustomConfigModule {}

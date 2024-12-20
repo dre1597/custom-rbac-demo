@@ -3,10 +3,13 @@ import {
   BeforeUpdate,
   Column,
   DataType,
+  HasOne,
   Model,
   Table,
 } from 'sequelize-typescript';
 import * as bcrypt from 'bcryptjs';
+
+import { RefreshToken } from './refresh-token.model';
 
 @Table({ tableName: 'users', timestamps: true, paranoid: true })
 export class User extends Model {
@@ -25,6 +28,12 @@ export class User extends Model {
     allowNull: false,
   })
   password: string;
+
+  @HasOne(() => RefreshToken, {
+    as: 'refreshToken',
+    foreignKey: 'userId',
+  })
+  refreshToken: RefreshToken;
 
   @BeforeCreate
   @BeforeUpdate
