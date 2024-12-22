@@ -4,7 +4,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 
 import { AppModule } from '../../src/app.module';
-import { createTestUserMock } from './mocks';
+import { createTestUserMock } from '../user/mocks';
+import { LoginDto } from '../../src/apps/auth/dto/login.dto';
+import { loginMock } from './mocks';
 
 describe('AuthController (e2e)', () => {
   let app: INestApplication;
@@ -37,6 +39,34 @@ describe('AuthController (e2e)', () => {
           username: user.username,
           password: plainPassword,
         });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toMatchObject({
+        token: expect.any(String),
+        refreshToken: expect.any(String),
+        user: expect.objectContaining({
+          id: user.id,
+          username: user.username,
+        }),
+      });
+    });
+
+    it('should refresh token', async () => {
+      const { user, plainPassword } = await createTestUserMock(app);
+
+      const loginDto: LoginDto = {
+        username: user.username,
+        password: plainPassword,
+      };
+
+      const loginResponse = await loginMock(app, loginDto);
+
+      const refreshToken = loginResponse.body.refreshToken;
+
+      const response = await request(app.getHttpServer())
+        .post('/auth/refresh')
+        .set('Authorization', `Bearer ${refreshToken}`)
+        .send();
 
       expect(response.status).toBe(200);
       expect(response.body).toMatchObject({

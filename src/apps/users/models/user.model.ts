@@ -33,7 +33,7 @@ export class User extends Model {
     as: 'refreshToken',
     foreignKey: 'userId',
   })
-  refreshToken: RefreshToken;
+  refreshToken?: RefreshToken;
 
   @BeforeCreate
   @BeforeUpdate

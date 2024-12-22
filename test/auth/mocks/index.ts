@@ -1,25 +1,8 @@
 import { INestApplication } from '@nestjs/common';
-import { User } from '../../../src/apps/users/models/user.model';
-import { UserRepository } from '../../../src/apps/users/repositories/user.repository';
+import * as request from 'supertest';
 
-export const createTestUserMock = async (
-  app: INestApplication,
-): Promise<{
-  user: User;
-  plainPassword: string;
-}> => {
-  const userRepository = app.get<UserRepository>(UserRepository);
-  const plainPassword = 'Any_password123';
+import { LoginDto } from '../../../src/apps/auth/dto/login.dto';
 
-  const user = await userRepository.create({
-    name: 'any_name',
-    email: 'any_email@email.com',
-    username: 'any_username',
-    password: plainPassword,
-  });
-
-  return {
-    user,
-    plainPassword: plainPassword,
-  };
+export const loginMock = (app: INestApplication, dto: LoginDto) => {
+  return request(app.getHttpServer()).post('/auth/login').send(dto);
 };
