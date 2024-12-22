@@ -3,8 +3,8 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { Sequelize } from 'sequelize-typescript';
 
-import { AppModule } from '../src/app.module';
-import { CreateUserDto } from '../src/apps/users/dto/create-user.dto';
+import { AppModule } from '../../src/app.module';
+import { CreateUserDto } from '../../src/apps/users/dto/create-user.dto';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
