@@ -5,6 +5,7 @@ import { Sequelize } from 'sequelize-typescript';
 
 import { AppModule } from '../../src/app.module';
 import { CreateUserDto } from '../../src/apps/users/dto/create-user.dto';
+import { loginMock } from '../auth/mocks';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
@@ -29,13 +30,18 @@ describe('UserController (e2e)', () => {
 
   describe('/users (POST)', () => {
     it('should create a user', async () => {
+      const {
+        body: { token },
+      } = await loginMock(app);
+
       const dto: CreateUserDto = {
-        username: 'admin',
-        password: 'Password@123',
+        username: 'any_username',
+        password: 'any_password',
       };
 
       const response = await request(app.getHttpServer())
         .post('/users')
+        .set('Authorization', `Bearer ${token}`)
         .send(dto);
 
       expect(response.status).toBe(201);
@@ -44,15 +50,23 @@ describe('UserController (e2e)', () => {
     });
 
     it('should not create a user with existing username', async () => {
+      const {
+        body: { token },
+      } = await loginMock(app);
+
       const dto: CreateUserDto = {
         username: 'admin',
         password: 'Password@123',
       };
 
-      await request(app.getHttpServer()).post('/users').send(dto);
+      await request(app.getHttpServer())
+        .post('/users')
+        .set('Authorization', `Bearer ${token}`)
+        .send(dto);
 
       const response = await request(app.getHttpServer())
         .post('/users')
+        .set('Authorization', `Bearer ${token}`)
         .send(dto);
 
       expect(response.status).toBe(409);
