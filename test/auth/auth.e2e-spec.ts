@@ -49,7 +49,9 @@ describe('AuthController (e2e)', () => {
         }),
       });
     });
+  });
 
+  describe('/auth/refresh-token (POST)', () => {
     it('should refresh token', async () => {
       const { user, plainPassword } = await createTestUserMock(app);
 

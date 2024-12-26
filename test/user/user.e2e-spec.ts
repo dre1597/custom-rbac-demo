@@ -82,7 +82,7 @@ describe('UserController (e2e)', () => {
     });
   });
 
-  describe('/:id/activate (PATCH)', () => {
+  describe('/users/:id/activate (PATCH)', () => {
     it('should activate a user', async () => {
       const { user } = await createTestUserMock(
         app,
@@ -120,7 +120,7 @@ describe('UserController (e2e)', () => {
     });
   });
 
-  describe('/:id/inactivate (PATCH)', () => {
+  describe('/users/:id/inactivate (PATCH)', () => {
     it('should inactivate a user', async () => {
       const { user } = await createTestUserMock(app);
 
@@ -154,7 +154,7 @@ describe('UserController (e2e)', () => {
     });
   });
 
-  describe('/:id (PATCH)', () => {
+  describe('/users/:id (PATCH)', () => {
     it('should update a user', async () => {
       const { user } = await createTestUserMock(app);
 
@@ -215,7 +215,7 @@ describe('UserController (e2e)', () => {
     });
   });
 
-  describe('/:id (DELETE)', () => {
+  describe('/users/:id (DELETE)', () => {
     it('should delete a user', async () => {
       const { user } = await createTestUserMock(app);
 
