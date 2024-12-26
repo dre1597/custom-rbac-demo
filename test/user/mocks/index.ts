@@ -3,10 +3,12 @@ import { randomUUID } from 'node:crypto';
 
 import { User } from '../../../src/apps/users/models/user.model';
 import { UserRepository } from '../../../src/apps/users/repositories/user.repository';
+import { UserStatus } from '../../../src/apps/users/enum/user-status.enum';
 
 export const createTestUserMock = async (
   app: INestApplication,
   dto: Partial<User> = {},
+  status = UserStatus.ACTIVE,
 ): Promise<{
   user: User;
   plainPassword: string;
@@ -18,6 +20,7 @@ export const createTestUserMock = async (
     email: `any_email_${randomUUID()}@email.com`,
     username: `any_username_${randomUUID()}`,
     password: plainPassword,
+    status,
     ...dto,
   });
 

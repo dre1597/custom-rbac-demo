@@ -7,6 +7,7 @@ import { AppModule } from '../../src/app.module';
 import { CreateUserDto } from '../../src/apps/users/dto/create-user.dto';
 import { loginMock } from '../auth/mocks';
 import { UserStatus } from '../../src/apps/users/enum/user-status.enum';
+import { createTestUserMock } from './mocks';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
@@ -76,6 +77,78 @@ describe('UserController (e2e)', () => {
         statusCode: 409,
         message: 'Username already exists',
         error: 'Conflict',
+      });
+    });
+  });
+
+  describe('/:id/activate (PATCH)', () => {
+    it('should activate a user', async () => {
+      const { user } = await createTestUserMock(
+        app,
+        undefined,
+        UserStatus.INACTIVE,
+      );
+
+      const {
+        body: { token },
+      } = await loginMock(app);
+
+      const response = await request(app.getHttpServer())
+        .patch(`/users/${user.id}/activate`)
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body.status).toBe(UserStatus.ACTIVE);
+    });
+
+    it('should throw error if user not found', async () => {
+      const {
+        body: { token },
+      } = await loginMock(app);
+
+      const response = await request(app.getHttpServer())
+        .patch('/users/0/activate')
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toBe(404);
+      expect(response.body).toEqual({
+        statusCode: 404,
+        message: 'User not found',
+        error: 'Not Found',
+      });
+    });
+  });
+
+  describe('/:id/inactivate (PATCH)', () => {
+    it('should inactivate a user', async () => {
+      const { user } = await createTestUserMock(app);
+
+      const {
+        body: { token },
+      } = await loginMock(app);
+
+      const response = await request(app.getHttpServer())
+        .patch(`/users/${user.id}/inactivate`)
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body.status).toBe(UserStatus.INACTIVE);
+    });
+
+    it('should throw error if user not found', async () => {
+      const {
+        body: { token },
+      } = await loginMock(app);
+
+      const response = await request(app.getHttpServer())
+        .patch('/users/0/inactivate')
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toBe(404);
+      expect(response.body).toEqual({
+        statusCode: 404,
+        message: 'User not found',
+        error: 'Not Found',
       });
     });
   });

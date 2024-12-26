@@ -1,6 +1,7 @@
 import {
   ConflictException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 
@@ -9,6 +10,7 @@ import { UserRepository } from './repositories/user.repository';
 import { User } from './models/user.model';
 import { RefreshTokenRepository } from './repositories/refresh-token.repository';
 import { RefreshToken } from './models/refresh-token.model';
+import { UserStatus } from './enum/user-status.enum';
 
 @Injectable()
 export class UserService {
@@ -72,6 +74,24 @@ export class UserService {
         fields: ['token', 'userId'],
       },
     );
+  }
+
+  async updateStatus(id: string, status: UserStatus) {
+    const user = await this.userRepository.findByPk(id);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    user.status = status;
+
+    await this.userRepository.update(user, {
+      where: {
+        id,
+      },
+    });
+
+    return user;
   }
 
   private async validatePassword(user: User, password: string) {
