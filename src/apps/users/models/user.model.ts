@@ -10,6 +10,7 @@ import {
 import * as bcrypt from 'bcryptjs';
 
 import { RefreshToken } from './refresh-token.model';
+import { UserStatus } from '../enum/user-status.enum';
 
 @Table({ tableName: 'users', timestamps: true, paranoid: true })
 export class User extends Model {
@@ -28,6 +29,13 @@ export class User extends Model {
     allowNull: false,
   })
   password: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    defaultValue: UserStatus.ACTIVE,
+  })
+  status: UserStatus;
 
   @HasOne(() => RefreshToken, {
     as: 'refreshToken',

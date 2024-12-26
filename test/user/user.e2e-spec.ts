@@ -6,6 +6,7 @@ import { Sequelize } from 'sequelize-typescript';
 import { AppModule } from '../../src/app.module';
 import { CreateUserDto } from '../../src/apps/users/dto/create-user.dto';
 import { loginMock } from '../auth/mocks';
+import { UserStatus } from '../../src/apps/users/enum/user-status.enum';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
@@ -47,6 +48,7 @@ describe('UserController (e2e)', () => {
       expect(response.status).toBe(201);
       expect(response.body.username).toBe(dto.username);
       expect(response.body.password).toBeUndefined();
+      expect(response.body.status).toBe(UserStatus.ACTIVE);
     });
 
     it('should not create a user with existing username', async () => {
