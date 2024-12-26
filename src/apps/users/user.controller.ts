@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Param, Patch, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuth } from '../auth/decorators/jwt-auth.decorator';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -33,5 +33,11 @@ export class UserController {
   @JwtAuth()
   update(@Param('id') id: string, @Body() dto: UpdateUserDto) {
     return this.userService.update(id, dto);
+  }
+
+  @Delete(':id')
+  @JwtAuth()
+  delete(@Param('id') id: string) {
+    return this.userService.delete(id);
   }
 }

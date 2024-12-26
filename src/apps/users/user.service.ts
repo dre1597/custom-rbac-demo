@@ -129,6 +129,16 @@ export class UserService {
     return userToUpdate;
   }
 
+  async delete(id: string) {
+    const user = await this.userRepository.findByPk(id);
+
+    if (!user) {
+      return;
+    }
+
+    await this.userRepository.softDelete(id);
+  }
+
   private async validatePassword(user: User, password: string) {
     if (!user.comparePassword(password)) {
       throw new UnauthorizedException('Invalid credentials');

@@ -6,6 +6,7 @@ import { AppModule } from '../../src/app.module';
 import { CreateUserDto } from '../../src/apps/users/dto/create-user.dto';
 import { UpdateUserDto } from '../../src/apps/users/dto/update-user.dto';
 import { UserStatus } from '../../src/apps/users/enum/user-status.enum';
+import { User } from '../../src/apps/users/models/user.model';
 import { loginMock } from '../auth/mocks';
 import { createTestUserMock } from './mocks';
 
@@ -211,6 +212,38 @@ describe('UserController (e2e)', () => {
         message: 'Username already exists',
         error: 'Conflict',
       });
+    });
+  });
+
+  describe('/:id (DELETE)', () => {
+    it('should delete a user', async () => {
+      const { user } = await createTestUserMock(app);
+
+      const {
+        body: { token },
+      } = await loginMock(app);
+
+      const response = await request(app.getHttpServer())
+        .delete(`/users/${user.id}`)
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toBe(200);
+
+      const deletedUser = await sequelize.model(User).findByPk(user.id);
+
+      expect(deletedUser).toBeNull();
+    });
+
+    it('should not throw an error if user not found', async () => {
+      const {
+        body: { token },
+      } = await loginMock(app);
+
+      const response = await request(app.getHttpServer())
+        .delete('/users/0')
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toBe(200);
     });
   });
 });
