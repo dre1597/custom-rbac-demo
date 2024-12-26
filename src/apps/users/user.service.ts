@@ -4,13 +4,12 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-
 import { CreateUserDto } from './dto/create-user.dto';
-import { UserRepository } from './repositories/user.repository';
+import { UserStatus } from './enum/user-status.enum';
+import { RefreshToken } from './models/refresh-token.model';
 import { User } from './models/user.model';
 import { RefreshTokenRepository } from './repositories/refresh-token.repository';
-import { RefreshToken } from './models/refresh-token.model';
-import { UserStatus } from './enum/user-status.enum';
+import { UserRepository } from './repositories/user.repository';
 
 @Injectable()
 export class UserService {

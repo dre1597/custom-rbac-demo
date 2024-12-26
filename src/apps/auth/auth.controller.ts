@@ -8,10 +8,9 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Request as ExpressRequest } from 'express';
-
 import { AuthService } from './auth.service';
-import { LoginDto } from './dto/login.dto';
 import { JwtRefreshAuth } from './decorators/jwt-refresh-auth.decorator';
+import { LoginDto } from './dto/login.dto';
 
 @ApiTags('Auth')
 @Controller('auth')

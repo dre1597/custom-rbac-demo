@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { plainToInstance } from 'class-transformer';
 import {
   IsEnum,
   IsNotEmpty,
@@ -7,8 +8,6 @@ import {
   IsString,
   validateSync,
 } from 'class-validator';
-import { plainToInstance } from 'class-transformer';
-
 import { apiConfig, authConfig } from './custom-config';
 
 export class ConfigValidationDto {

@@ -1,11 +1,10 @@
 import { INestApplication } from '@nestjs/common';
-import { Sequelize } from 'sequelize-typescript';
 import { Test, TestingModule } from '@nestjs/testing';
+import { Sequelize } from 'sequelize-typescript';
 import * as request from 'supertest';
-
 import { AppModule } from '../../src/app.module';
-import { createTestUserMock } from '../user/mocks';
 import { LoginDto } from '../../src/apps/auth/dto/login.dto';
+import { createTestUserMock } from '../user/mocks';
 import { loginMock } from './mocks';
 
 describe('AuthController (e2e)', () => {

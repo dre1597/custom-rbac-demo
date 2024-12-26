@@ -1,4 +1,3 @@
-import { Model, ModelCtor } from 'sequelize-typescript';
 import {
   CreateOptions,
   CreationAttributes,
@@ -6,6 +5,7 @@ import {
   FindOptions,
   UpdateOptions,
 } from 'sequelize';
+import { Model, ModelCtor } from 'sequelize-typescript';
 
 export class BaseRepository<T extends Model> {
   constructor(protected readonly model: ModelCtor<T>) {}

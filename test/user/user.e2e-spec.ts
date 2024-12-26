@@ -1,12 +1,11 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
+import { Test, TestingModule } from '@nestjs/testing';
 import { Sequelize } from 'sequelize-typescript';
-
+import * as request from 'supertest';
 import { AppModule } from '../../src/app.module';
 import { CreateUserDto } from '../../src/apps/users/dto/create-user.dto';
-import { loginMock } from '../auth/mocks';
 import { UserStatus } from '../../src/apps/users/enum/user-status.enum';
+import { loginMock } from '../auth/mocks';
 import { createTestUserMock } from './mocks';
 
 describe('UserController (e2e)', () => {

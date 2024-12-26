@@ -1,3 +1,5 @@
+import * as bcrypt from 'bcryptjs';
+import { createHash } from 'crypto';
 import {
   BeforeCreate,
   BeforeUpdate,
@@ -8,9 +10,6 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
-import * as bcrypt from 'bcryptjs';
-import { createHash } from 'crypto';
-
 import { User } from './user.model';
 
 @Table({ tableName: 'refresh_tokens', timestamps: true, paranoid: true })

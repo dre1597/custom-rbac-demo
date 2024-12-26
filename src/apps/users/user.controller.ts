@@ -1,10 +1,9 @@
 import { Body, Controller, Param, Patch, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-
-import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { JwtAuth } from '../auth/decorators/jwt-auth.decorator';
+import { CreateUserDto } from './dto/create-user.dto';
 import { UserStatus } from './enum/user-status.enum';
+import { UserService } from './user.service';
 
 @ApiTags('Users')
 @Controller('users')

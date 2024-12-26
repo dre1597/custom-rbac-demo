@@ -1,3 +1,4 @@
+import * as bcrypt from 'bcryptjs';
 import {
   BeforeCreate,
   BeforeUpdate,
@@ -7,10 +8,8 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
-import * as bcrypt from 'bcryptjs';
-
-import { RefreshToken } from './refresh-token.model';
 import { UserStatus } from '../enum/user-status.enum';
+import { RefreshToken } from './refresh-token.model';
 
 @Table({ tableName: 'users', timestamps: true, paranoid: true })
 export class User extends Model {

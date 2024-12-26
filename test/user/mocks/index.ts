@@ -1,9 +1,8 @@
 import { INestApplication } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
-
+import { UserStatus } from '../../../src/apps/users/enum/user-status.enum';
 import { User } from '../../../src/apps/users/models/user.model';
 import { UserRepository } from '../../../src/apps/users/repositories/user.repository';
-import { UserStatus } from '../../../src/apps/users/enum/user-status.enum';
 
 export const createTestUserMock = async (
   app: INestApplication,
