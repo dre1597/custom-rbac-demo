@@ -4,6 +4,7 @@ import { Sequelize } from 'sequelize-typescript';
 import * as request from 'supertest';
 import { AppModule } from '../../src/app.module';
 import { CreateUserDto } from '../../src/apps/users/dto/create-user.dto';
+import { UpdateUserDto } from '../../src/apps/users/dto/update-user.dto';
 import { UserStatus } from '../../src/apps/users/enum/user-status.enum';
 import { loginMock } from '../auth/mocks';
 import { createTestUserMock } from './mocks';
@@ -148,6 +149,67 @@ describe('UserController (e2e)', () => {
         statusCode: 404,
         message: 'User not found',
         error: 'Not Found',
+      });
+    });
+  });
+
+  describe('/:id (PATCH)', () => {
+    it('should update a user', async () => {
+      const { user } = await createTestUserMock(app);
+
+      const {
+        body: { token },
+      } = await loginMock(app);
+
+      const dto: UpdateUserDto = {
+        username: 'updated_username',
+      };
+
+      const response = await request(app.getHttpServer())
+        .patch(`/users/${user.id}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send(dto);
+
+      expect(response.status).toBe(200);
+      expect(response.body.username).toBe(dto.username);
+    });
+
+    it('should throw error if user not found', async () => {
+      const {
+        body: { token },
+      } = await loginMock(app);
+
+      const response = await request(app.getHttpServer())
+        .patch('/users/0')
+        .set('Authorization', `Bearer ${token}`)
+        .send({});
+
+      expect(response.status).toBe(404);
+      expect(response.body).toEqual({
+        statusCode: 404,
+        message: 'User not found',
+        error: 'Not Found',
+      });
+    });
+
+    it('should throw error if username is duplicated', async () => {
+      const { user: userWithSameUsername } = await createTestUserMock(app);
+      const { user: userToUpdate } = await createTestUserMock(app);
+
+      const {
+        body: { token },
+      } = await loginMock(app);
+
+      const response = await request(app.getHttpServer())
+        .patch(`/users/${userToUpdate.id}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({ username: userWithSameUsername.username });
+
+      expect(response.status).toBe(409);
+      expect(response.body).toEqual({
+        statusCode: 409,
+        message: 'Username already exists',
+        error: 'Conflict',
       });
     });
   });

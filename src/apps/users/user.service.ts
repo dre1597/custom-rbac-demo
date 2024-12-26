@@ -5,6 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { UserStatus } from './enum/user-status.enum';
 import { RefreshToken } from './models/refresh-token.model';
 import { User } from './models/user.model';
@@ -91,6 +92,41 @@ export class UserService {
     });
 
     return user;
+  }
+
+  async update(id: string, dto: UpdateUserDto) {
+    const user = await this.userRepository.findByPk(id);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (dto.username !== user.username) {
+      const userExists = await this.userRepository.findOne({
+        where: {
+          username: dto.username,
+        },
+      });
+
+      if (userExists) {
+        throw new ConflictException('Username already exists');
+      }
+    }
+
+    const userToUpdate = {
+      ...user.toJSON(),
+      ...dto,
+    };
+
+    await this.userRepository.update(userToUpdate, {
+      where: {
+        id,
+      },
+    });
+
+    delete userToUpdate.password;
+
+    return userToUpdate;
   }
 
   private async validatePassword(user: User, password: string) {

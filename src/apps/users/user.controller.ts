@@ -2,6 +2,7 @@ import { Body, Controller, Param, Patch, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuth } from '../auth/decorators/jwt-auth.decorator';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { UserStatus } from './enum/user-status.enum';
 import { UserService } from './user.service';
 
@@ -12,8 +13,8 @@ export class UserController {
 
   @Post()
   @JwtAuth()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  create(@Body() dto: CreateUserDto) {
+    return this.userService.create(dto);
   }
 
   @Patch(':id/activate')
@@ -26,5 +27,11 @@ export class UserController {
   @JwtAuth()
   inactivate(@Param('id') id: string) {
     return this.userService.updateStatus(id, UserStatus.INACTIVE);
+  }
+
+  @Patch(':id')
+  @JwtAuth()
+  update(@Param('id') id: string, @Body() dto: UpdateUserDto) {
+    return this.userService.update(id, dto);
   }
 }
