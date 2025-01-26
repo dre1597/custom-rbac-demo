@@ -1,0 +1,18 @@
+{
+  "development": {
+    "dialect": "sqlite",
+    "storage": "src/providers/database/database.sqlite",
+    "logging": false,
+    "dialectOptions": {
+      "foreignKeys": true
+    }
+  },
+  "test": {
+    "dialect": "sqlite",
+    "storage": "src/providers/database/database-test.sqlite",
+    "logging": false,
+    "dialectOptions": {
+      "foreignKeys": true
+    }
+  }
+}

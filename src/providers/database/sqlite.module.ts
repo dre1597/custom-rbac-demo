@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
+import * as databaseConfig from './config.json';
 
 @Module({
   imports: [
@@ -8,20 +9,12 @@ import { SequelizeModule } from '@nestjs/sequelize';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
         const nodeEnv = configService.get<string>('api.nodeEnv');
-        const storage =
-          nodeEnv === 'test'
-            ? 'src/providers/database/database-test.sqlite'
-            : 'src/providers/database/database.sqlite';
+        const config = databaseConfig[nodeEnv];
 
         return {
-          dialect: 'sqlite',
-          storage,
+          ...config,
           autoLoadModels: true,
           synchronize: true,
-          logging: false,
-          dialectOptions: {
-            foreignKeys: true,
-          },
         };
       },
       inject: [ConfigService],
