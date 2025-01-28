@@ -27,6 +27,8 @@ export class SequelizeExceptionFilter {
     if (exception instanceof HttpException) {
       const status = exception.getStatus();
       return response.status(status).json({
+        // @ts-expect-error type problem
+        error: exception.getResponse().error,
         statusCode: status,
         message: exception.message,
       });
@@ -35,6 +37,7 @@ export class SequelizeExceptionFilter {
     return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
       message: 'Internal server error',
+      error: exception,
     });
   }
 }
