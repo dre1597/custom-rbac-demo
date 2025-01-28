@@ -10,6 +10,7 @@ import { UserStatus } from './enum/user-status.enum';
 import { RefreshToken } from './models/refresh-token.model';
 import { User } from './models/user.model';
 import { RefreshTokenRepository } from './repositories/refresh-token.repository';
+import { RoleRepository } from './repositories/role.repository';
 import { UserRepository } from './repositories/user.repository';
 
 @Injectable()
@@ -17,6 +18,7 @@ export class UserService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly refreshTokenRepository: RefreshTokenRepository,
+    private readonly roleRepository: RoleRepository,
   ) {}
 
   async create(dto: CreateUserDto) {
@@ -28,6 +30,16 @@ export class UserService {
 
     if (userExists) {
       throw new ConflictException('Username already exists');
+    }
+
+    const role = await this.roleRepository.findOne({
+      where: {
+        id: dto.roleId,
+      },
+    });
+
+    if (!role) {
+      throw new NotFoundException('Role not found');
     }
 
     const userCreated = await this.userRepository.create({

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, Matches } from 'class-validator';
+import { IsNotEmpty, IsString, IsUUID, Matches } from 'class-validator';
 
 import { passwordValidation } from '../constants/regex';
 
@@ -20,4 +20,9 @@ export class CreateUserDto {
     message: passwordValidation.message,
   })
   password: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsUUID(4)
+  roleId: string;
 }
