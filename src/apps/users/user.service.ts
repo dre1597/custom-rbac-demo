@@ -113,7 +113,7 @@ export class UserService {
       throw new NotFoundException('User not found');
     }
 
-    if (dto.username !== user.username) {
+    if (dto?.username && dto.username !== user.username) {
       const userExists = await this.userRepository.findOne({
         where: {
           username: dto.username,
@@ -122,6 +122,18 @@ export class UserService {
 
       if (userExists) {
         throw new ConflictException('Username already exists');
+      }
+    }
+
+    if (dto.roleId) {
+      const role = await this.roleRepository.findOne({
+        where: {
+          id: dto.roleId,
+        },
+      });
+
+      if (!role) {
+        throw new NotFoundException('Role not found');
       }
     }
 
