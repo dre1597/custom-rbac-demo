@@ -37,7 +37,7 @@ export class SequelizeExceptionFilter {
     return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
       message: 'Internal server error',
-      error: exception,
+      error: exception.error,
     });
   }
 }
