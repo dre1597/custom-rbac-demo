@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { PermissionRepository } from './repositories/permission.repository';
@@ -18,6 +22,16 @@ export class RoleService {
     const transaction = await this.sequelize.transaction();
 
     try {
+      const roleExists = await this.roleRepository.findOne({
+        where: {
+          name: dto.name,
+        },
+      });
+
+      if (roleExists) {
+        throw new ConflictException('Role already exists');
+      }
+
       const permissions = await this.permissionRepository.findAll({
         where: {
           id: dto.permissions,
