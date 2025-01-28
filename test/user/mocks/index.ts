@@ -20,10 +20,13 @@ export const createTestUserMock = async (
   const userRepository = app.get<UserRepository>(UserRepository);
   const plainPassword = 'Any_password123';
 
+  const role = await createTestRoleMock(app);
+
   const user = await userRepository.create({
     email: `any_email_${randomUUID()}@email.com`,
     username: `any_username_${randomUUID()}`,
     password: plainPassword,
+    roleId: role.id,
     status,
     ...dto,
   });
@@ -51,7 +54,7 @@ export const createTestPermissionMock = async (
 
 export const createTestRoleMock = async (
   app: INestApplication,
-  dto: Partial<Role>,
+  dto: Partial<Role> = {},
 ) => {
   const roleRepository = app.get<RoleRepository>(RoleRepository);
   const rolePermissionRepository = app.get(RolePermissionRepository);
@@ -67,4 +70,6 @@ export const createTestRoleMock = async (
     roleId: role.id,
     permissionId: permission.id,
   });
+
+  return role;
 };

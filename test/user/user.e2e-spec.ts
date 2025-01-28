@@ -1,19 +1,22 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { randomUUID } from 'node:crypto';
 import { Sequelize } from 'sequelize-typescript';
 import * as request from 'supertest';
 import { AppModule } from '../../src/app.module';
 import { CreateUserDto } from '../../src/apps/users/dto/create-user.dto';
 import { UpdateUserDto } from '../../src/apps/users/dto/update-user.dto';
 import { UserStatus } from '../../src/apps/users/enum/user-status.enum';
+import { Role } from '../../src/apps/users/models/role.model';
 import { User } from '../../src/apps/users/models/user.model';
 import { SequelizeExceptionFilter } from '../../src/common/exceptions/sequelize-exception.filter';
 import { loginMock } from '../auth/mocks';
-import { createTestUserMock } from './mocks';
+import { createTestRoleMock, createTestUserMock } from './mocks';
 
 describe('UserController (e2e)', () => {
   let app: INestApplication;
   let sequelize: Sequelize;
+  let role: Role;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -33,6 +36,8 @@ describe('UserController (e2e)', () => {
     sequelize = moduleFixture.get<Sequelize>(Sequelize);
     await sequelize.drop();
     await sequelize.sync();
+
+    role = await createTestRoleMock(app);
   });
 
   afterEach(async () => {
@@ -48,6 +53,7 @@ describe('UserController (e2e)', () => {
       const dto: CreateUserDto = {
         username: 'any_username',
         password: 'Any_password@123',
+        roleId: role.id,
       };
 
       const response = await request(app.getHttpServer())
@@ -69,6 +75,7 @@ describe('UserController (e2e)', () => {
       const dto: CreateUserDto = {
         username: 'admin',
         password: 'Any_password@123',
+        roleId: role.id,
       };
 
       await request(app.getHttpServer())
@@ -86,6 +93,31 @@ describe('UserController (e2e)', () => {
         statusCode: 409,
         message: 'Username already exists',
         error: 'Conflict',
+      });
+    });
+
+    it('should not create a user with invalid role id', async () => {
+      const {
+        body: { token },
+      } = await loginMock(app);
+
+      const dto: CreateUserDto = {
+        username: 'any_username',
+        password: 'Any_password@123',
+        roleId: randomUUID(),
+      };
+
+      const response = await request(app.getHttpServer())
+        .post('/users')
+        .set('Authorization', `Bearer ${token}`)
+        .send(dto);
+
+      expect(response.status).toBe(404);
+
+      expect(response.body).toEqual({
+        statusCode: 404,
+        message: 'Role not found',
+        error: 'Not Found',
       });
     });
   });
