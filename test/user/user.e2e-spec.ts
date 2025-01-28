@@ -204,6 +204,7 @@ describe('UserController (e2e)', () => {
 
       const dto: UpdateUserDto = {
         username: 'updated_username',
+        roleId: role.id,
       };
 
       const response = await request(app.getHttpServer())
@@ -213,6 +214,7 @@ describe('UserController (e2e)', () => {
 
       expect(response.status).toBe(200);
       expect(response.body.username).toBe(dto.username);
+      expect(response.body.roleId).toBe(dto.roleId);
     });
 
     it('should throw error if user not found', async () => {
@@ -251,6 +253,26 @@ describe('UserController (e2e)', () => {
         statusCode: 409,
         message: 'Username already exists',
         error: 'Conflict',
+      });
+    });
+
+    it('should throw error if role not found', async () => {
+      const { user } = await createTestUserMock(app);
+
+      const {
+        body: { token },
+      } = await loginMock(app);
+
+      const response = await request(app.getHttpServer())
+        .patch(`/users/${user.id}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({ roleId: randomUUID() });
+
+      expect(response.status).toBe(404);
+      expect(response.body).toEqual({
+        statusCode: 404,
+        message: 'Role not found',
+        error: 'Not Found',
       });
     });
   });
