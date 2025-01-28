@@ -1,4 +1,4 @@
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Sequelize } from 'sequelize-typescript';
 import * as request from 'supertest';
@@ -7,6 +7,7 @@ import { CreateUserDto } from '../../src/apps/users/dto/create-user.dto';
 import { UpdateUserDto } from '../../src/apps/users/dto/update-user.dto';
 import { UserStatus } from '../../src/apps/users/enum/user-status.enum';
 import { User } from '../../src/apps/users/models/user.model';
+import { SequelizeExceptionFilter } from '../../src/common/exceptions/sequelize-exception.filter';
 import { loginMock } from '../auth/mocks';
 import { createTestUserMock } from './mocks';
 
@@ -20,6 +21,13 @@ describe('UserController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    app.useGlobalPipes(
+      new ValidationPipe({
+        transform: true,
+        whitelist: true,
+      }),
+    );
+    app.useGlobalFilters(new SequelizeExceptionFilter());
     await app.init();
 
     sequelize = moduleFixture.get<Sequelize>(Sequelize);
@@ -39,7 +47,7 @@ describe('UserController (e2e)', () => {
 
       const dto: CreateUserDto = {
         username: 'any_username',
-        password: 'any_password',
+        password: 'Any_password@123',
       };
 
       const response = await request(app.getHttpServer())
@@ -60,7 +68,7 @@ describe('UserController (e2e)', () => {
 
       const dto: CreateUserDto = {
         username: 'admin',
-        password: 'Password@123',
+        password: 'Any_password@123',
       };
 
       await request(app.getHttpServer())
