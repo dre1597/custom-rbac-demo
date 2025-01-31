@@ -18,6 +18,12 @@ export class RoleService {
     private sequelize: Sequelize,
   ) {}
 
+  async findAll() {
+    return this.roleRepository.findAll({
+      include: ['permissions'],
+    });
+  }
+
   async create(dto: CreateRoleDto) {
     const transaction = await this.sequelize.transaction();
 
