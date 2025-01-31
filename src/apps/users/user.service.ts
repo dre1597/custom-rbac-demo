@@ -5,6 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
+import { FindAllUsersDto } from './dto/find-all-users.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserStatus } from './enum/user-status.enum';
 import { RefreshToken } from './models/refresh-token.model';
@@ -21,8 +22,8 @@ export class UserService {
     private readonly roleRepository: RoleRepository,
   ) {}
 
-  findAll() {
-    return this.userRepository.findAll();
+  findAll(dto: FindAllUsersDto) {
+    return this.userRepository.findAllWithPagination(dto);
   }
 
   async create(dto: CreateUserDto) {

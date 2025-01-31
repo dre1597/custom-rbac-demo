@@ -13,6 +13,8 @@ export class SequelizeExceptionFilter {
     const context = host.switchToHttp();
     const response = context.getResponse();
 
+    console.error(exception);
+
     if (exception.name === 'SequelizeUniqueConstraintError') {
       return response.status(HttpStatus.BAD_REQUEST).json({
         statusCode: HttpStatus.CONFLICT,

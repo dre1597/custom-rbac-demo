@@ -6,10 +6,12 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuth } from '../auth/decorators/jwt-auth.decorator';
 import { CreateUserDto } from './dto/create-user.dto';
+import { FindAllUsersDto } from './dto/find-all-users.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserStatus } from './enum/user-status.enum';
 import { UserService } from './user.service';
@@ -21,8 +23,8 @@ export class UserController {
 
   @Get()
   @JwtAuth()
-  findAll() {
-    return this.userService.findAll();
+  findAll(@Query() dto: FindAllUsersDto) {
+    return this.userService.findAll(dto);
   }
 
   @Post()
