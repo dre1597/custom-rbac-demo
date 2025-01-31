@@ -21,6 +21,10 @@ export class UserService {
     private readonly roleRepository: RoleRepository,
   ) {}
 
+  findAll() {
+    return this.userRepository.findAll();
+  }
+
   async create(dto: CreateUserDto) {
     const userExists = await this.userRepository.findOne({
       where: {

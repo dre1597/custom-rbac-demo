@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuth } from '../auth/decorators/jwt-auth.decorator';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -10,6 +18,12 @@ import { UserService } from './user.service';
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @Get()
+  @JwtAuth()
+  findAll() {
+    return this.userService.findAll();
+  }
 
   @Post()
   @JwtAuth()
