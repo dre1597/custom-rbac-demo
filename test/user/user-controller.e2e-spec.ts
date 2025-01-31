@@ -46,8 +46,6 @@ describe('UserController (e2e)', () => {
 
   describe('/users (GET)', () => {
     it('should get all users', async () => {
-      const { user } = await createTestUserMock(app);
-
       const {
         body: { token },
       } = await loginMock(app);
@@ -57,19 +55,104 @@ describe('UserController (e2e)', () => {
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(200);
-      expect(response.body).toEqual(
+      expect(response.body.data).toEqual(
         expect.arrayContaining(
-          response.body.map(() =>
+          response.body.data.map(() =>
             expect.objectContaining({
               id: expect.any(String),
               username: expect.any(String),
               createdAt: expect.any(String),
               status: UserStatus.ACTIVE,
-              roleId: expect.any(String),
+              role: {
+                id: expect.any(String),
+                name: expect.any(String),
+              },
             }),
           ),
         ),
       );
+      expect(response.body.pagination).toEqual({
+        currentPage: 1,
+        perPage: 10,
+        totalItems: 1,
+        previousPage: null,
+        nextPage: null,
+      });
+    });
+
+    it('should paginate users', async () => {
+      const { user, role } = await createTestUserMock(app);
+
+      const {
+        body: { token },
+      } = await loginMock(app);
+
+      const response = await request(app.getHttpServer())
+        .get('/users')
+        .set('Authorization', `Bearer ${token}`)
+        .query({ page: 2, perPage: 1 });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toMatchObject({
+        data: [
+          {
+            id: user.id,
+            username: user.username,
+            createdAt: expect.any(String),
+            status: user.status,
+            role: {
+              id: role.id,
+              name: role.name,
+            },
+          },
+        ],
+        pagination: {
+          currentPage: 2,
+          perPage: 1,
+          totalItems: 2,
+          previousPage: 1,
+          nextPage: null,
+        },
+      });
+    });
+
+    it('should search users', async () => {
+      await createTestRoleMock(app);
+      const { user, role } = await createTestUserMock(app, {
+        username: 'username_to_search',
+      });
+
+      const {
+        body: { token },
+      } = await loginMock(app);
+
+      const response = await request(app.getHttpServer())
+        .get('/users')
+        .set('Authorization', `Bearer ${token}`)
+        .query({ search: 'search' });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toMatchObject({
+        data: [
+          {
+            id: user.id,
+            username: user.username,
+            createdAt: expect.any(String),
+            status: user.status,
+            role: {
+              id: role.id,
+              name: role.name,
+            },
+          },
+        ],
+        pagination: {
+          currentPage: 1,
+          perPage: 1,
+          totalItems: 1,
+          previousPage: null,
+          nextPage: null,
+        },
+      });
     });
   });
 

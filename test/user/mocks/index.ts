@@ -15,6 +15,7 @@ export const createTestUserMock = async (
   status = UserStatus.ACTIVE,
 ): Promise<{
   user: User;
+  role: Role;
   plainPassword: string;
 }> => {
   const userRepository = app.get<UserRepository>(UserRepository);
@@ -33,6 +34,7 @@ export const createTestUserMock = async (
 
   return {
     user,
+    role,
     plainPassword: plainPassword,
   };
 };
