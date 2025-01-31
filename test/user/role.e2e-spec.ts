@@ -38,6 +38,39 @@ describe('RoleController (e2e)', () => {
     await app.close();
   });
 
+  describe('/roles (GET)', () => {
+    it('should get all roles', async () => {
+      const {
+        body: { token },
+      } = await loginMock(app);
+
+      const response = await request(app.getHttpServer())
+        .get('/roles')
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual(
+        expect.arrayContaining(
+          response.body.map(() =>
+            expect.objectContaining({
+              id: expect.any(String),
+              name: expect.any(String),
+              createdAt: expect.any(String),
+              status: RoleStatus.ACTIVE,
+              permissions: expect.arrayContaining([
+                expect.objectContaining({
+                  id: expect.any(String),
+                  name: expect.any(String),
+                  createdAt: expect.any(String),
+                }),
+              ]),
+            }),
+          ),
+        ),
+      );
+    });
+  });
+
   describe('/roles (POST)', () => {
     it('should create a role', async () => {
       const {
