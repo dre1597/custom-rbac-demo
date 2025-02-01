@@ -6,7 +6,6 @@ import {
 import { Sequelize } from 'sequelize-typescript';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { PermissionRepository } from './repositories/permission.repository';
-import { RolePermissionRepository } from './repositories/role-permission.repository';
 import { RoleRepository } from './repositories/role.repository';
 
 @Injectable()
@@ -14,7 +13,6 @@ export class RoleService {
   constructor(
     private readonly roleRepository: RoleRepository,
     private readonly permissionRepository: PermissionRepository,
-    private readonly rolePermissionRepository: RolePermissionRepository,
     private sequelize: Sequelize,
   ) {}
 
@@ -77,5 +75,15 @@ export class RoleService {
       await transaction.rollback();
       throw error;
     }
+  }
+
+  async findOne(id: string) {
+    const role = await this.roleRepository.getDetails(id);
+
+    if (!role) {
+      throw new NotFoundException('Role not found');
+    }
+
+    return role;
   }
 }
