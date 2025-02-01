@@ -25,8 +25,13 @@ export class BaseRepository<T extends Model> {
   async create(
     values: CreationAttributes<T>,
     options?: CreateOptions<T>,
+    json = true,
   ): Promise<T> {
     const created = await this.model.create(values, options);
+
+    if (!json) {
+      return created;
+    }
     return created.toJSON();
   }
 

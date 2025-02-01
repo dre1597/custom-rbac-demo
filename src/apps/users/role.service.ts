@@ -55,24 +55,24 @@ export class RoleService {
         {
           transaction,
         },
+        false,
       );
 
-      await Promise.all(
-        dto.permissions.map((permissionId) =>
-          this.rolePermissionRepository.create(
-            {
-              roleId: role.id,
-              permissionId: permissionId,
-            },
-            {
-              transaction,
-            },
-          ),
-        ),
-      );
+      await role.$set('permissions', dto.permissions, { transaction });
 
       await transaction.commit();
-      return role;
+
+      return {
+        id: role.id,
+        name: role.name,
+        createdAt: role.createdAt,
+        status: role.status,
+        permissions: permissions.map((permission) => ({
+          id: permission.id,
+          name: permission.name,
+          createdAt: permission.createdAt,
+        })),
+      };
     } catch (error) {
       await transaction.rollback();
       throw error;
