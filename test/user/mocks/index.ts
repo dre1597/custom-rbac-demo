@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
+import { RoleStatus } from '../../../src/apps/users/enum/role-status.enum';
 import { UserStatus } from '../../../src/apps/users/enum/user-status.enum';
 import { Permission } from '../../../src/apps/users/models/permission.model';
 import { Role } from '../../../src/apps/users/models/role.model';
@@ -28,8 +29,8 @@ export const createTestUserMock = async (
     username: `any_username_${randomUUID()}`,
     password: plainPassword,
     roleId: role.id,
-    status,
     ...dto,
+    status,
   });
 
   return {
@@ -57,6 +58,7 @@ export const createTestPermissionMock = async (
 export const createTestRoleMock = async (
   app: INestApplication,
   dto: Partial<Role> = {},
+  status = RoleStatus.ACTIVE,
 ) => {
   const roleRepository = app.get<RoleRepository>(RoleRepository);
   const rolePermissionRepository = app.get(RolePermissionRepository);
@@ -65,6 +67,7 @@ export const createTestRoleMock = async (
   const role = await roleRepository.create({
     name: `any_name_${randomUUID()}`,
     ...dto,
+    status,
   });
 
   await rolePermissionRepository.create({

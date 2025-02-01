@@ -203,4 +203,76 @@ describe('RoleController (e2e)', () => {
       });
     });
   });
+
+  describe('/roles/:id/activate (PATCH)', () => {
+    it('should activate a role', async () => {
+      const { role } = await createTestRoleMock(
+        app,
+        undefined,
+        RoleStatus.INACTIVE,
+      );
+
+      const {
+        body: { token },
+      } = await loginMock(app);
+
+      const response = await request(app.getHttpServer())
+        .patch(`/roles/${role.id}/activate`)
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body.status).toBe(RoleStatus.ACTIVE);
+    });
+
+    it('should throw error if role not found', async () => {
+      const {
+        body: { token },
+      } = await loginMock(app);
+
+      const response = await request(app.getHttpServer())
+        .patch('/roles/0/activate')
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toBe(404);
+      expect(response.body).toEqual({
+        statusCode: 404,
+        message: 'Role not found',
+        error: 'Not Found',
+      });
+    });
+  });
+
+  describe('/roles/:id/inactivate (PATCH)', () => {
+    it('should inactivate a roles', async () => {
+      const { role } = await createTestRoleMock(app);
+
+      const {
+        body: { token },
+      } = await loginMock(app);
+
+      const response = await request(app.getHttpServer())
+        .patch(`/roles/${role.id}/inactivate`)
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body.status).toBe(RoleStatus.INACTIVE);
+    });
+
+    it('should throw error if role not found', async () => {
+      const {
+        body: { token },
+      } = await loginMock(app);
+
+      const response = await request(app.getHttpServer())
+        .patch('/roles/0/inactivate')
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toBe(404);
+      expect(response.body).toEqual({
+        statusCode: 404,
+        message: 'Role not found',
+        error: 'Not Found',
+      });
+    });
+  });
 });
