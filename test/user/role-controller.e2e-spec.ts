@@ -71,6 +71,52 @@ describe('RoleController (e2e)', () => {
     });
   });
 
+  describe('/roles/:id (GET)', () => {
+    it('should get a role', async () => {
+      const { role, permission } = await createTestRoleMock(app);
+
+      const {
+        body: { token },
+      } = await loginMock(app);
+
+      const response = await request(app.getHttpServer())
+        .get(`/roles/${role.id}`)
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body).toMatchObject({
+        id: role.id,
+        name: role.name,
+        createdAt: expect.any(String),
+        status: role.status,
+        permissions: [
+          {
+            id: permission.id,
+            name: permission.name,
+            createdAt: expect.any(String),
+          },
+        ],
+      });
+    });
+
+    it('should not get a role not found', async () => {
+      const {
+        body: { token },
+      } = await loginMock(app);
+
+      const response = await request(app.getHttpServer())
+        .get(`/roles/${randomUUID()}`)
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toBe(404);
+      expect(response.body).toEqual({
+        statusCode: 404,
+        message: 'Role not found',
+        error: 'Not Found',
+      });
+    });
+  });
+
   describe('/roles (POST)', () => {
     it('should create a role', async () => {
       const {

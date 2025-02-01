@@ -20,8 +20,8 @@ export const createTestUserMock = async (
 }> => {
   const userRepository = app.get<UserRepository>(UserRepository);
   const plainPassword = 'Any_password123';
-  
-  const role = await createTestRoleMock(app);
+
+  const { role } = await createTestRoleMock(app);
 
   const user = await userRepository.create({
     email: `any_email_${randomUUID()}@email.com`,
@@ -73,5 +73,8 @@ export const createTestRoleMock = async (
     permissionId: permission.id,
   });
 
-  return role;
+  return {
+    role,
+    permission,
+  };
 };
