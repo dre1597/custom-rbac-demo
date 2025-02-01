@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
 import { CreateRoleDto } from './dto/create-role.dto';
+import { RoleStatus } from './enum/role-status.enum';
 import { PermissionRepository } from './repositories/permission.repository';
 import { RoleRepository } from './repositories/role.repository';
 
@@ -83,6 +84,24 @@ export class RoleService {
     if (!role) {
       throw new NotFoundException('Role not found');
     }
+
+    return role;
+  }
+
+  async updateStatus(id: string, status: RoleStatus) {
+    const role = await this.roleRepository.findByPk(id);
+
+    if (!role) {
+      throw new NotFoundException('Role not found');
+    }
+
+    role.status = status;
+
+    await this.roleRepository.update(role, {
+      where: {
+        id,
+      },
+    });
 
     return role;
   }
