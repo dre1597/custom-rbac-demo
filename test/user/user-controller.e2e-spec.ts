@@ -156,6 +156,32 @@ describe('UserController (e2e)', () => {
     });
   });
 
+  describe('/users/:id (GET)', () => {
+    it('should get a user', async () => {
+      const { user, role } = await createTestUserMock(app);
+
+      const {
+        body: { token },
+      } = await loginMock(app);
+
+      const response = await request(app.getHttpServer())
+        .get(`/users/${user.id}`)
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body).toMatchObject({
+        id: user.id,
+        username: user.username,
+        createdAt: expect.any(String),
+        status: user.status,
+        role: {
+          id: role.id,
+          name: role.name,
+        },
+      });
+    });
+  });
+
   describe('/users (POST)', () => {
     it('should create a user', async () => {
       const {
