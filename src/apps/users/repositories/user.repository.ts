@@ -4,6 +4,7 @@ import { Op } from 'sequelize';
 import { BaseRepository } from '../../../common/repositories/base-repository';
 import { paginate } from '../../../common/repositories/helpers/pagination';
 import { FindAllUsersDto } from '../dto/find-all-users.dto';
+import { Permission } from '../models/permission.model';
 import { RefreshToken } from '../models/refresh-token.model';
 import { Role } from '../models/role.model';
 import { User } from '../models/user.model';
@@ -60,6 +61,27 @@ export class UserRepository extends BaseRepository<User> {
         {
           model: RefreshToken,
           as: 'refreshToken',
+        },
+      ],
+    });
+  }
+
+  getDetails(id: string) {
+    return this.model.findByPk(id, {
+      attributes: ['id', 'username', 'createdAt', 'status'],
+      include: [
+        {
+          model: Role,
+          as: 'role',
+          attributes: ['id', 'name'],
+          include: [
+            {
+              model: Permission,
+              as: 'permissions',
+              attributes: ['id', 'name', 'scope', 'description'],
+              through: { attributes: [] },
+            },
+          ],
         },
       ],
     });

@@ -26,6 +26,10 @@ export class UserService {
     return this.userRepository.findAllWithPagination(dto);
   }
 
+  findOne(id: string) {
+    return this.userRepository.getDetails(id);
+  }
+
   async create(dto: CreateUserDto) {
     const userExists = await this.userRepository.findOne({
       where: {

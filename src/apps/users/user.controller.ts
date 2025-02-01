@@ -27,6 +27,12 @@ export class UserController {
     return this.userService.findAll(dto);
   }
 
+  @Get(':id')
+  @JwtAuth()
+  findOne(@Param('id') id: string) {
+    return this.userService.findOne(id);
+  }
+
   @Post()
   @JwtAuth()
   create(@Body() dto: CreateUserDto) {
