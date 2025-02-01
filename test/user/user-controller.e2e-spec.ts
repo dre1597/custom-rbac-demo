@@ -147,7 +147,7 @@ describe('UserController (e2e)', () => {
         ],
         pagination: {
           currentPage: 1,
-          perPage: 1,
+          perPage: 10,
           totalItems: 1,
           previousPage: null,
           nextPage: null,

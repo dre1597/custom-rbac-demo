@@ -95,6 +95,13 @@ describe('RoleController (e2e)', () => {
         name: dto.name,
         createdAt: expect.any(String),
         status: RoleStatus.ACTIVE,
+        permissions: [
+          {
+            id: permission.id,
+            name: permission.name,
+            createdAt: expect.any(String),
+          },
+        ],
       });
     });
 
