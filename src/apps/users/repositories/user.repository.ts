@@ -43,11 +43,11 @@ export class UserRepository extends BaseRepository<User> {
       offset: (page - 1) * perPage,
       limit: perPage,
       order: [['createdAt', 'DESC']],
-      attributes: ['id', 'username', 'createdAt', 'status'],
+      attributes: ['id', 'username', 'createdAt', 'status', 'createdAt'],
       include: [
         {
           model: Role,
-          attributes: ['id', 'name'],
+          attributes: ['id', 'name', 'status', 'createdAt'],
         },
       ],
     });
@@ -73,12 +73,12 @@ export class UserRepository extends BaseRepository<User> {
         {
           model: Role,
           as: 'role',
-          attributes: ['id', 'name'],
+          attributes: ['id', 'name', 'status', 'createdAt'],
           include: [
             {
               model: Permission,
               as: 'permissions',
-              attributes: ['id', 'name', 'scope', 'description'],
+              attributes: ['id', 'name', 'scope', 'description', 'createdAt'],
               through: { attributes: [] },
             },
           ],

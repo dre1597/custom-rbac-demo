@@ -37,7 +37,7 @@ describe('UserController (e2e)', () => {
     await sequelize.drop();
     await sequelize.sync();
 
-    role = await createTestRoleMock(app);
+    ({ role } = await createTestRoleMock(app));
   });
 
   afterEach(async () => {
@@ -66,6 +66,8 @@ describe('UserController (e2e)', () => {
               role: {
                 id: expect.any(String),
                 name: expect.any(String),
+                status: expect.any(String),
+                createdAt: expect.any(String),
               },
             }),
           ),
@@ -103,6 +105,8 @@ describe('UserController (e2e)', () => {
             role: {
               id: role.id,
               name: role.name,
+              status: role.status,
+              createdAt: expect.any(String),
             },
           },
         ],
@@ -142,6 +146,8 @@ describe('UserController (e2e)', () => {
             role: {
               id: role.id,
               name: role.name,
+              status: role.status,
+              createdAt: expect.any(String),
             },
           },
         ],
@@ -177,6 +183,8 @@ describe('UserController (e2e)', () => {
         role: {
           id: role.id,
           name: role.name,
+          status: role.status,
+          createdAt: expect.any(String),
         },
       });
     });
