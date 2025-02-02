@@ -1,14 +1,8 @@
-import {
-  Body,
-  Controller,
-  HttpCode,
-  HttpStatus,
-  Post,
-  Request,
-} from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { Request as ExpressRequest } from 'express';
+import { User } from '../users/models/user.model';
 import { AuthService } from './auth.service';
+import { CurrentUser } from './decorators/current-user.decorator';
 import { JwtRefreshAuth } from './decorators/jwt-refresh-auth.decorator';
 import { LoginDto } from './dto/login.dto';
 
@@ -26,7 +20,7 @@ export class AuthController {
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   @JwtRefreshAuth()
-  async refreshToken(@Request() req: ExpressRequest) {
-    return this.authService.loginViaRefreshToken(req.user);
+  async refreshToken(@CurrentUser() user: User) {
+    return this.authService.loginViaRefreshToken(user);
   }
 }
