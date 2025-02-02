@@ -183,4 +183,14 @@ export class RoleService {
       throw error;
     }
   }
+
+  async delete(id: string) {
+    const role = this.roleRepository.findByPk(id);
+
+    if (!role) {
+      return;
+    }
+
+    await this.roleRepository.softDelete(id);
+  }
 }
