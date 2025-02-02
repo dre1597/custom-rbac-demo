@@ -7,6 +7,7 @@ import { AppModule } from '../../src/app.module';
 import { CreateRoleDto } from '../../src/apps/users/dto/create-role.dto';
 import { UpdateRoleDto } from '../../src/apps/users/dto/update-role.dto';
 import { RoleStatus } from '../../src/apps/users/enum/role-status.enum';
+import { Role } from '../../src/apps/users/models/role.model';
 import { SequelizeExceptionFilter } from '../../src/common/exceptions/sequelize-exception.filter';
 import { loginMock } from '../auth/mocks';
 import { createTestPermissionMock, createTestRoleMock } from './mocks';
@@ -312,6 +313,38 @@ describe('RoleController (e2e)', () => {
           },
         ],
       });
+    });
+  });
+
+  describe('/roles/:id (DELETE)', () => {
+    it('should delete a role', async () => {
+      const { role } = await createTestRoleMock(app);
+
+      const {
+        body: { token },
+      } = await loginMock(app);
+
+      const response = await request(app.getHttpServer())
+        .delete(`/roles/${role.id}`)
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toBe(200);
+
+      const deletedRole = await sequelize.model(Role).findByPk(role.id);
+
+      expect(deletedRole).toBeNull();
+    });
+
+    it('should not throw an error if user not found', async () => {
+      const {
+        body: { token },
+      } = await loginMock(app);
+
+      const response = await request(app.getHttpServer())
+        .delete('/roles/0')
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(response.status).toBe(200);
     });
   });
 });
