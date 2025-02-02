@@ -146,6 +146,7 @@ describe('RoleController (e2e)', () => {
           {
             id: permission.id,
             name: permission.name,
+            scope: permission.scope,
             createdAt: expect.any(String),
           },
         ],
