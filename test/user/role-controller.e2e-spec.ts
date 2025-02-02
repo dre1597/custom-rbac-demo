@@ -154,7 +154,7 @@ describe('RoleController (e2e)', () => {
       });
     });
 
-    it('should not create a role with a existing name', async () => {
+    it('should throw error if name is duplicated', async () => {
       const {
         body: { token },
       } = await loginMock(app);
@@ -183,7 +183,7 @@ describe('RoleController (e2e)', () => {
       });
     });
 
-    it('should not create a role without permissions', async () => {
+    it('should not create a role with invalid permissions', async () => {
       const {
         body: { token },
       } = await loginMock(app);
@@ -312,6 +312,79 @@ describe('RoleController (e2e)', () => {
             createdAt: expect.any(String),
           },
         ],
+      });
+    });
+
+    it('should throw error if role not found', async () => {
+      const {
+        body: { token },
+      } = await loginMock(app);
+
+      const response = await request(app.getHttpServer())
+        .patch('/roles/0')
+        .set('Authorization', `Bearer ${token}`)
+        .send({});
+
+      expect(response.status).toBe(HttpStatus.NOT_FOUND);
+      expect(response.body).toEqual({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Role not found',
+        error: 'Not Found',
+      });
+    });
+
+    it('should throw error if name is duplicated', async () => {
+      const { role } = await createTestRoleMock(app, {
+        name: 'any_role',
+      });
+
+      await createTestRoleMock(app, {
+        name: 'updated_role',
+      });
+
+      const {
+        body: { token },
+      } = await loginMock(app);
+
+      const dto: UpdateRoleDto = {
+        name: 'updated_role',
+      };
+
+      const response = await request(app.getHttpServer())
+        .patch(`/roles/${role.id}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send(dto);
+
+      expect(response.status).toBe(HttpStatus.CONFLICT);
+      expect(response.body).toEqual({
+        statusCode: HttpStatus.CONFLICT,
+        message: 'Role already exists',
+        error: 'Conflict',
+      });
+    });
+    it('should not create a role with invalid permissions', async () => {
+      const { role } = await createTestRoleMock(app, {
+        name: 'any_role',
+      });
+
+      const {
+        body: { token },
+      } = await loginMock(app);
+
+      const dto: UpdateRoleDto = {
+        permissions: [randomUUID()],
+      };
+
+      const response = await request(app.getHttpServer())
+        .patch(`/roles/${role.id}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send(dto);
+
+      expect(response.status).toBe(HttpStatus.NOT_FOUND);
+      expect(response.body).toMatchObject({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Some permissions not found',
+        error: 'Not Found',
       });
     });
   });
