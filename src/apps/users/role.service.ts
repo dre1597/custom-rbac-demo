@@ -70,6 +70,7 @@ export class RoleService {
         permissions: permissions.map((permission) => ({
           id: permission.id,
           name: permission.name,
+          scope: permission.scope,
           createdAt: permission.createdAt,
         })),
       };
