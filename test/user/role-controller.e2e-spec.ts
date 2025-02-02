@@ -5,6 +5,7 @@ import { Sequelize } from 'sequelize-typescript';
 import * as request from 'supertest';
 import { AppModule } from '../../src/app.module';
 import { CreateRoleDto } from '../../src/apps/users/dto/create-role.dto';
+import { UpdateRoleDto } from '../../src/apps/users/dto/update-role.dto';
 import { RoleStatus } from '../../src/apps/users/enum/role-status.enum';
 import { SequelizeExceptionFilter } from '../../src/common/exceptions/sequelize-exception.filter';
 import { loginMock } from '../auth/mocks';
@@ -272,6 +273,43 @@ describe('RoleController (e2e)', () => {
         statusCode: 404,
         message: 'Role not found',
         error: 'Not Found',
+      });
+    });
+  });
+
+  describe('/roles/:id (PATCH)', () => {
+    it('should update a role', async () => {
+      const { role } = await createTestRoleMock(app);
+      const permission = await createTestPermissionMock(app);
+
+      const {
+        body: { token },
+      } = await loginMock(app);
+
+      const dto: UpdateRoleDto = {
+        name: 'updated_role',
+        permissions: [permission.id],
+      };
+
+      const response = await request(app.getHttpServer())
+        .patch(`/roles/${role.id}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send(dto);
+
+      expect(response.status).toBe(200);
+      expect(response.body).toMatchObject({
+        id: expect.any(String),
+        name: dto.name,
+        status: role.status,
+        createdAt: expect.any(String),
+        permissions: [
+          {
+            id: permission.id,
+            name: permission.name,
+            scope: permission.scope,
+            createdAt: expect.any(String),
+          },
+        ],
       });
     });
   });
