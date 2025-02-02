@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
 import { CreateRoleDto } from './dto/create-role.dto';
+import { UpdateRoleDto } from './dto/update-role.dto';
 import { RoleStatus } from './enum/role-status.enum';
 import { PermissionRepository } from './repositories/permission.repository';
 import { RoleRepository } from './repositories/role.repository';
@@ -104,5 +105,81 @@ export class RoleService {
     });
 
     return role;
+  }
+
+  async update(id: string, dto: UpdateRoleDto) {
+    const transaction = await this.sequelize.transaction();
+
+    try {
+      const role = await this.roleRepository.findByPk(id, {
+        include: ['permissions'],
+      });
+
+      if (!role) {
+        throw new NotFoundException('Role not found');
+      }
+
+      if (dto?.name && dto.name !== role.name) {
+        const roleExists = await this.roleRepository.findOne({
+          where: {
+            name: dto.name,
+          },
+        });
+
+        if (roleExists) {
+          throw new ConflictException('Role already exists');
+        }
+
+        role.name = dto.name;
+      }
+
+      if (dto.permissions?.length) {
+        const permissions = await this.permissionRepository.findAll({
+          where: {
+            id: dto.permissions,
+          },
+        });
+
+        if (permissions.length !== dto.permissions.length) {
+          throw new NotFoundException('Some permissions not found');
+        }
+
+        await role.$set('permissions', permissions, { transaction });
+      }
+
+      const roleToUpdate = {
+        ...role.toJSON(),
+        ...dto,
+      };
+
+      await this.roleRepository.update(roleToUpdate, {
+        where: {
+          id,
+        },
+        transaction,
+      });
+
+      await transaction.commit();
+
+      const updatedRole = await this.roleRepository.findByPk(id, {
+        include: ['permissions'],
+      });
+
+      return {
+        id: updatedRole.id,
+        name: updatedRole.name,
+        createdAt: updatedRole.createdAt,
+        status: updatedRole.status,
+        permissions: updatedRole.permissions.map((permission) => ({
+          id: permission.id,
+          name: permission.name,
+          scope: permission.scope,
+          createdAt: permission.createdAt,
+        })),
+      };
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
+    }
   }
 }

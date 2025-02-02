@@ -2,6 +2,7 @@ import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuth } from '../auth/decorators/jwt-auth.decorator';
 import { CreateRoleDto } from './dto/create-role.dto';
+import { UpdateRoleDto } from './dto/update-role.dto';
 import { RoleStatus } from './enum/role-status.enum';
 import { RoleService } from './role.service';
 
@@ -35,5 +36,11 @@ export class RoleController {
   @JwtAuth()
   inactivate(@Param('id') id: string) {
     return this.roleService.updateStatus(id, RoleStatus.INACTIVE);
+  }
+
+  @Patch(':id')
+  @JwtAuth()
+  update(@Param('id') id: string, @Body() dto: UpdateRoleDto) {
+    return this.roleService.update(id, dto);
   }
 }
