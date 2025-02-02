@@ -1,8 +1,10 @@
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { exec } from 'child_process';
 import { randomUUID } from 'node:crypto';
 import { Sequelize } from 'sequelize-typescript';
 import * as request from 'supertest';
+import { promisify } from 'util';
 import { AppModule } from '../../src/app.module';
 import { CreateUserDto } from '../../src/apps/users/dto/create-user.dto';
 import { UpdateUserDto } from '../../src/apps/users/dto/update-user.dto';
@@ -36,6 +38,9 @@ describe('UserController (e2e)', () => {
     sequelize = moduleFixture.get<Sequelize>(Sequelize);
     await sequelize.drop();
     await sequelize.sync();
+
+    const execPromise = promisify(exec);
+    await execPromise('npx sequelize-cli db:seed:all');
 
     ({ role } = await createTestRoleMock(app));
   });
@@ -92,7 +97,7 @@ describe('UserController (e2e)', () => {
       const response = await request(app.getHttpServer())
         .get('/users')
         .set('Authorization', `Bearer ${token}`)
-        .query({ page: 2, perPage: 1 });
+        .query({ page: 1, perPage: 1 });
 
       expect(response.status).toBe(HttpStatus.OK);
       expect(response.body).toMatchObject({
@@ -111,11 +116,11 @@ describe('UserController (e2e)', () => {
           },
         ],
         pagination: {
-          currentPage: 2,
+          currentPage: 1,
           perPage: 1,
           totalItems: 2,
-          previousPage: 1,
-          nextPage: null,
+          previousPage: null,
+          nextPage: 2,
         },
       });
     });

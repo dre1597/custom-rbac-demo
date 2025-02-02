@@ -5,7 +5,7 @@ const { randomUUID } = require('node:crypto');
 const {
   RoleStatus,
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-} = require('../../../../dist/apps/users/enum/role-status.enum.js');
+} = require('../../../../dist/apps/users/enum/role-status.enum');
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {

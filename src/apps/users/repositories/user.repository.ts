@@ -57,10 +57,25 @@ export class UserRepository extends BaseRepository<User> {
 
   findByPkWithRelations(id: string) {
     return this.model.findByPk(id, {
+      attributes: ['id', 'username', 'createdAt', 'status', 'roleId'],
       include: [
         {
           model: RefreshToken,
           as: 'refreshToken',
+          attributes: ['id', 'token', 'createdAt'],
+        },
+        {
+          model: Role,
+          as: 'role',
+          attributes: ['id', 'name', 'status', 'createdAt'],
+          include: [
+            {
+              model: Permission,
+              as: 'permissions',
+              attributes: ['id', 'name', 'scope', 'description', 'createdAt'],
+              through: { attributes: [] },
+            },
+          ],
         },
       ],
     });

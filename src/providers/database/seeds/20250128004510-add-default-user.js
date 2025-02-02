@@ -3,7 +3,7 @@
 const {
   UserStatus,
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-} = require('../../../../dist/apps/users/enum/user-status.enum.js');
+} = require('../../../../dist/apps/users/enum/user-status.enum');
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const { randomUUID } = require('node:crypto');
 // eslint-disable-next-line @typescript-eslint/no-require-imports

@@ -1,7 +1,9 @@
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { exec } from 'child_process';
 import { Sequelize } from 'sequelize-typescript';
 import * as request from 'supertest';
+import { promisify } from 'util';
 import { AppModule } from '../../src/app.module';
 import { LoginDto } from '../../src/apps/auth/dto/login.dto';
 import { createTestUserMock } from '../user/mocks';
@@ -22,6 +24,9 @@ describe('AuthController (e2e)', () => {
     sequelize = moduleFixture.get<Sequelize>(Sequelize);
     await sequelize.drop();
     await sequelize.sync();
+
+    const execPromise = promisify(exec);
+    await execPromise('npx sequelize-cli db:seed:all');
   });
 
   afterEach(async () => {

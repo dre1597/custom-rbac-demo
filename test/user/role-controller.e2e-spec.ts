@@ -1,8 +1,10 @@
 import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { exec } from 'child_process';
 import { randomUUID } from 'node:crypto';
 import { Sequelize } from 'sequelize-typescript';
 import * as request from 'supertest';
+import { promisify } from 'util';
 import { AppModule } from '../../src/app.module';
 import { CreateRoleDto } from '../../src/apps/users/dto/create-role.dto';
 import { UpdateRoleDto } from '../../src/apps/users/dto/update-role.dto';
@@ -34,6 +36,9 @@ describe('RoleController (e2e)', () => {
     sequelize = moduleFixture.get<Sequelize>(Sequelize);
     await sequelize.drop();
     await sequelize.sync();
+
+    const execPromise = promisify(exec);
+    await execPromise('npx sequelize-cli db:seed:all');
   });
 
   afterEach(async () => {
