@@ -50,7 +50,7 @@ describe('RoleController (e2e)', () => {
         .get('/roles')
         .set('Authorization', `Bearer ${token}`);
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(HttpStatus.OK);
       expect(response.body).toEqual(
         expect.arrayContaining(
           response.body.map(() =>
@@ -85,7 +85,7 @@ describe('RoleController (e2e)', () => {
         .get(`/roles/${role.id}`)
         .set('Authorization', `Bearer ${token}`);
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(HttpStatus.OK);
       expect(response.body).toMatchObject({
         id: role.id,
         name: role.name,
@@ -110,9 +110,9 @@ describe('RoleController (e2e)', () => {
         .get(`/roles/${randomUUID()}`)
         .set('Authorization', `Bearer ${token}`);
 
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(HttpStatus.NOT_FOUND);
       expect(response.body).toEqual({
-        statusCode: 404,
+        statusCode: HttpStatus.NOT_FOUND,
         message: 'Role not found',
         error: 'Not Found',
       });
@@ -137,7 +137,7 @@ describe('RoleController (e2e)', () => {
         .set('Authorization', `Bearer ${token}`)
         .send(dto);
 
-      expect(response.status).toBe(201);
+      expect(response.status).toBe(HttpStatus.CREATED);
       expect(response.body).toMatchObject({
         id: expect.any(String),
         name: dto.name,
@@ -175,9 +175,9 @@ describe('RoleController (e2e)', () => {
         .set('Authorization', `Bearer ${token}`)
         .send(dto);
 
-      expect(response.status).toBe(409);
+      expect(response.status).toBe(HttpStatus.CONFLICT);
       expect(response.body).toMatchObject({
-        statusCode: 409,
+        statusCode: HttpStatus.CONFLICT,
         message: 'Role already exists',
         error: 'Conflict',
       });
@@ -198,9 +198,9 @@ describe('RoleController (e2e)', () => {
         .set('Authorization', `Bearer ${token}`)
         .send(dto);
 
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(HttpStatus.NOT_FOUND);
       expect(response.body).toMatchObject({
-        statusCode: 404,
+        statusCode: HttpStatus.NOT_FOUND,
         message: 'Some permissions not found',
         error: 'Not Found',
       });
@@ -223,7 +223,7 @@ describe('RoleController (e2e)', () => {
         .patch(`/roles/${role.id}/activate`)
         .set('Authorization', `Bearer ${token}`);
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(HttpStatus.OK);
       expect(response.body.status).toBe(RoleStatus.ACTIVE);
     });
 
@@ -236,9 +236,9 @@ describe('RoleController (e2e)', () => {
         .patch('/roles/0/activate')
         .set('Authorization', `Bearer ${token}`);
 
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(HttpStatus.NOT_FOUND);
       expect(response.body).toEqual({
-        statusCode: 404,
+        statusCode: HttpStatus.NOT_FOUND,
         message: 'Role not found',
         error: 'Not Found',
       });
@@ -257,7 +257,7 @@ describe('RoleController (e2e)', () => {
         .patch(`/roles/${role.id}/inactivate`)
         .set('Authorization', `Bearer ${token}`);
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(HttpStatus.OK);
       expect(response.body.status).toBe(RoleStatus.INACTIVE);
     });
 
@@ -270,9 +270,9 @@ describe('RoleController (e2e)', () => {
         .patch('/roles/0/inactivate')
         .set('Authorization', `Bearer ${token}`);
 
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(HttpStatus.NOT_FOUND);
       expect(response.body).toEqual({
-        statusCode: 404,
+        statusCode: HttpStatus.NOT_FOUND,
         message: 'Role not found',
         error: 'Not Found',
       });
@@ -298,7 +298,7 @@ describe('RoleController (e2e)', () => {
         .set('Authorization', `Bearer ${token}`)
         .send(dto);
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(HttpStatus.OK);
       expect(response.body).toMatchObject({
         id: expect.any(String),
         name: dto.name,

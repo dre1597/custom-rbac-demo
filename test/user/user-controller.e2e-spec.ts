@@ -54,7 +54,7 @@ describe('UserController (e2e)', () => {
         .get('/users')
         .set('Authorization', `Bearer ${token}`);
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(HttpStatus.OK);
       expect(response.body.data).toEqual(
         expect.arrayContaining(
           response.body.data.map(() =>
@@ -94,7 +94,7 @@ describe('UserController (e2e)', () => {
         .set('Authorization', `Bearer ${token}`)
         .query({ page: 2, perPage: 1 });
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(HttpStatus.OK);
       expect(response.body).toMatchObject({
         data: [
           {
@@ -135,7 +135,7 @@ describe('UserController (e2e)', () => {
         .set('Authorization', `Bearer ${token}`)
         .query({ search: 'search' });
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(HttpStatus.OK);
       expect(response.body).toMatchObject({
         data: [
           {
@@ -174,7 +174,7 @@ describe('UserController (e2e)', () => {
         .get(`/users/${user.id}`)
         .set('Authorization', `Bearer ${token}`);
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(HttpStatus.OK);
       expect(response.body).toMatchObject({
         id: user.id,
         username: user.username,
@@ -207,7 +207,7 @@ describe('UserController (e2e)', () => {
         .set('Authorization', `Bearer ${token}`)
         .send(dto);
 
-      expect(response.status).toBe(201);
+      expect(response.status).toBe(HttpStatus.CREATED);
       expect(response.body.username).toBe(dto.username);
       expect(response.body.password).toBeUndefined();
       expect(response.body.status).toBe(UserStatus.ACTIVE);
@@ -234,9 +234,9 @@ describe('UserController (e2e)', () => {
         .set('Authorization', `Bearer ${token}`)
         .send(dto);
 
-      expect(response.status).toBe(409);
+      expect(response.status).toBe(HttpStatus.CONFLICT);
       expect(response.body).toEqual({
-        statusCode: 409,
+        statusCode: HttpStatus.CONFLICT,
         message: 'Username already exists',
         error: 'Conflict',
       });
@@ -258,10 +258,10 @@ describe('UserController (e2e)', () => {
         .set('Authorization', `Bearer ${token}`)
         .send(dto);
 
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(HttpStatus.NOT_FOUND);
 
       expect(response.body).toEqual({
-        statusCode: 404,
+        statusCode: HttpStatus.NOT_FOUND,
         message: 'Role not found',
         error: 'Not Found',
       });
@@ -284,7 +284,7 @@ describe('UserController (e2e)', () => {
         .patch(`/users/${user.id}/activate`)
         .set('Authorization', `Bearer ${token}`);
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(HttpStatus.OK);
       expect(response.body.status).toBe(UserStatus.ACTIVE);
     });
 
@@ -297,9 +297,9 @@ describe('UserController (e2e)', () => {
         .patch('/users/0/activate')
         .set('Authorization', `Bearer ${token}`);
 
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(HttpStatus.NOT_FOUND);
       expect(response.body).toEqual({
-        statusCode: 404,
+        statusCode: HttpStatus.NOT_FOUND,
         message: 'User not found',
         error: 'Not Found',
       });
@@ -318,7 +318,7 @@ describe('UserController (e2e)', () => {
         .patch(`/users/${user.id}/inactivate`)
         .set('Authorization', `Bearer ${token}`);
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(HttpStatus.OK);
       expect(response.body.status).toBe(UserStatus.INACTIVE);
     });
 
@@ -331,9 +331,9 @@ describe('UserController (e2e)', () => {
         .patch('/users/0/inactivate')
         .set('Authorization', `Bearer ${token}`);
 
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(HttpStatus.NOT_FOUND);
       expect(response.body).toEqual({
-        statusCode: 404,
+        statusCode: HttpStatus.NOT_FOUND,
         message: 'User not found',
         error: 'Not Found',
       });
@@ -358,7 +358,7 @@ describe('UserController (e2e)', () => {
         .set('Authorization', `Bearer ${token}`)
         .send(dto);
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(HttpStatus.OK);
       expect(response.body.username).toBe(dto.username);
       expect(response.body.roleId).toBe(dto.roleId);
     });
@@ -373,9 +373,9 @@ describe('UserController (e2e)', () => {
         .set('Authorization', `Bearer ${token}`)
         .send({});
 
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(HttpStatus.NOT_FOUND);
       expect(response.body).toEqual({
-        statusCode: 404,
+        statusCode: HttpStatus.NOT_FOUND,
         message: 'User not found',
         error: 'Not Found',
       });
@@ -394,9 +394,9 @@ describe('UserController (e2e)', () => {
         .set('Authorization', `Bearer ${token}`)
         .send({ username: userWithSameUsername.username });
 
-      expect(response.status).toBe(409);
+      expect(response.status).toBe(HttpStatus.CONFLICT);
       expect(response.body).toEqual({
-        statusCode: 409,
+        statusCode: HttpStatus.CONFLICT,
         message: 'Username already exists',
         error: 'Conflict',
       });
@@ -414,9 +414,9 @@ describe('UserController (e2e)', () => {
         .set('Authorization', `Bearer ${token}`)
         .send({ roleId: randomUUID() });
 
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(HttpStatus.NOT_FOUND);
       expect(response.body).toEqual({
-        statusCode: 404,
+        statusCode: HttpStatus.NOT_FOUND,
         message: 'Role not found',
         error: 'Not Found',
       });
