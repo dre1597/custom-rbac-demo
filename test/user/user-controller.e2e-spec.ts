@@ -1,4 +1,4 @@
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { randomUUID } from 'node:crypto';
 import { Sequelize } from 'sequelize-typescript';
@@ -435,7 +435,7 @@ describe('UserController (e2e)', () => {
         .delete(`/users/${user.id}`)
         .set('Authorization', `Bearer ${token}`);
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(HttpStatus.NO_CONTENT);
 
       const deletedUser = await sequelize.model(User).findByPk(user.id);
 
@@ -451,7 +451,7 @@ describe('UserController (e2e)', () => {
         .delete('/users/0')
         .set('Authorization', `Bearer ${token}`);
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(HttpStatus.NO_CONTENT);
     });
   });
 });
