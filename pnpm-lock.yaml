@@ -50,9 +50,6 @@ importers:
       passport-jwt:
         specifier: ^4.0.1
         version: 4.0.1
-      prettier-plugin-organize-imports:
-        specifier: ^4.1.0
-        version: 4.1.0(prettier@3.4.2)(typescript@5.7.2)
       reflect-metadata:
         specifier: ^0.2.0
         version: 0.2.2
@@ -120,6 +117,9 @@ importers:
       prettier:
         specifier: ^3.0.0
         version: 3.4.2
+      prettier-plugin-organize-imports:
+        specifier: ^4.1.0
+        version: 4.1.0(prettier@3.4.2)(typescript@5.7.2)
       sequelize-cli:
         specifier: ^6.6.2
         version: 6.6.2
